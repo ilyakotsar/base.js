@@ -1,0 +1,20 @@
+{
+  "name": "@ilyakotsar/base.js",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ilyakotsar/base.js#readme",
+  "bugs": {
+    "url": "https://github.com/ilyakotsar/base.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilyakotsar/base.js.git"
+  },
+  "license": "MIT",
+  "author": "Ilya Kotsar",
+  "type": "commonjs",
+  "main": "base.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
