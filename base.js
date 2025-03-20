@@ -8,24 +8,15 @@ if (!baseJsCsrfTokenName) {
     var baseJsCsrfTokenName = 'csrfmiddlewaretoken';
 }
 
-function baseJsAddStyles() {
-    let style = document.createElement('style');
-    style.innerText = `.${baseJsDisplayNoneClass} {display: none;} `;
-    style.innerText += 'button span, button svg, button i, button img {pointer-events: none;}';
-    document.head.appendChild(style);
-}
-
-baseJsAddStyles();
-
 /**
  * 
  * @param {string} method 
  * @param {string} url 
  * @param {object} data (optional) 
  * @param {string} indicator (optional) 
- * @returns {Promise<string>|Promise<any>}
+ * @returns {Promise<string>|Promise<object>}
  */
-async function baseJsRequest(method, url, data, indicator) {
+async function baseJsRequest(method, url, data={}, indicator='') {
     let options = {
         method: method.toUpperCase(),
         credentials: 'same-origin',
@@ -59,13 +50,12 @@ async function baseJsRequest(method, url, data, indicator) {
 }
 
 /**
- * 
- * @param {object} element 
  * @param {string} target 
  * @param {string|number} value 
  * @param {string} swap 
+ * @param {object} element (optional) 
  */
-function baseJsSwap(element, target, value, swap) {
+function baseJsSwap(target, value, swap, element=null) {
     let elements = [];
     if (target.slice(0, 5) === 'name=') {
         let name = target.split('name=')[1];
@@ -104,13 +94,13 @@ function baseJsSwap(element, target, value, swap) {
 
 /**
  * 
- * @param {object} element
  * @param {string|object} response 
  * @param {string} target 
  * @param {string} swap 
  * @param {string} key (optional) 
+ * @param {object} element (optional) 
  */
-function baseJsAfterRequest(element, response, target, swap, key) {
+function baseJsAfterRequest(response, target, swap, key='', element=null) {
     let targetArray = target.split(',');
     let swapArray = swap.split(',');
     let keyArray = key.split(',');
@@ -124,9 +114,18 @@ function baseJsAfterRequest(element, response, target, swap, key) {
                 value = value[part];
             });
         }
-        baseJsSwap(element, target, value, swap);
+        baseJsSwap(target, value, swap, element);
     }
 }
+
+function baseJsAddStyles() {
+    let style = document.createElement('style');
+    style.innerText = `.${baseJsDisplayNoneClass} {display: none;} `;
+    style.innerText += 'button span, button svg, button i, button img {pointer-events: none;}';
+    document.head.appendChild(style);
+}
+
+baseJsAddStyles();
 
 window.addEventListener('click', function(event) {
     let element = event.target;
@@ -145,7 +144,7 @@ window.addEventListener('click', function(event) {
     }
     if (getUrl) {
         baseJsRequest('get', getUrl, {}, indicator).then(response => {
-            baseJsAfterRequest(element, response, target, swap, key);
+            baseJsAfterRequest(response, target, swap, key, element);
         });
     } else if (postUrl) {
         let form = element.getAttribute(`${baseJsPrefix}form`);
@@ -165,7 +164,7 @@ window.addEventListener('click', function(event) {
             }
         });
         baseJsRequest('post', postUrl, data, indicator).then(response => {
-            baseJsAfterRequest(response, key, target, swap);
+            baseJsAfterRequest(response, target, swap, key, element);
         });
     } else if (apply) {
         let value = apply;
@@ -176,7 +175,7 @@ window.addEventListener('click', function(event) {
             let value = valueArray[i].trim();
             let target = targetArray[i].trim();
             let swap = swapArray[i].trim();
-            baseJsSwap(element, target, value, swap);
+            baseJsSwap(target, value, swap, element);
         }
     } else if (display) {
         let iconShow = element.getAttribute(`${baseJsPrefix}icon-show`);
